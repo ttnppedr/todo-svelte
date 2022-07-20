@@ -1,45 +1,56 @@
 <script>
-  import svelteLogo from './assets/svelte.svg'
-  import Counter from './lib/Counter.svelte'
+    import "./css/style.css"
 </script>
 
-<main>
-  <div>
-    <a href="https://vitejs.dev" target="_blank"> 
-      <img src="/vite.svg" class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank"> 
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
+<div class="todo-app-container">
+    <div class="todo-app">
+        <h2>Todo App</h2>
+        <form action="#">
+            <input type="text" class="todo-input" placeholder="What do you need to do?">
+        </form>
 
-  <div class="card">
-    <Counter />
-  </div>
+        <ul class="todo-list">
+            <li class="todo-item-container">
+                <div class="todo-item">
+                    <input type="checkbox">
+                    <span class="todo-item-label">Finish Svelte Series</span>
+                </div>
 
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
+                <button class="x-button">
+                    <svg
+                        class="x-button-icon"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
+            </li>
+        </ul>
 
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
-</main>
+        <div class="check-all-container">
+            <div>
+                <div class="button">Check All</div>
+            </div>
 
-<style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
-</style>
+            <span>3 items remaining</span>
+        </div>
+
+        <div class="other-buttons-container">
+            <div>
+                <button class="button filter-button filter-button-active">All</button>
+                <button class="button filter-button">Active</button>
+                <button class="button filter-button">Completed</button>
+            </div>
+            <div>
+                <button class="button">Clear completed</button>
+            </div>
+        </div>
+    </div>
+</div>
