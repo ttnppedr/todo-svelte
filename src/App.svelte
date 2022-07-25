@@ -62,6 +62,33 @@
     function clearCompleted() {
         todos = todos.filter((todo) => !todo.isComplete);
     }
+
+    let beforeEditCache = '';
+
+    function editTodo(todo) {
+        beforeEditCache = todo.title;
+        todo.isEditing = true;
+        todos = todos;
+    }
+
+    function doneEdit(todo) {
+        if (todo.title.trim().length === 0) {
+            todo.title = beforeEditCache;
+        }
+        todo.isEditing = false;
+        todos = todos;
+    }
+
+    function doneEditKeydown(event, todo) {
+        if (event.key === 'Enter') {
+            doneEdit(todo);
+        }
+
+        if (event.key === 'Escape') {
+            todo.title = beforeEditCache;
+            doneEdit(todo);
+        }
+    }
 </script>
 
 <div class="todo-app-container">
@@ -77,7 +104,22 @@
                     <li class="todo-item-container">
                         <div class="todo-item">
                             <input type="checkbox" bind:checked={todo.isComplete} />
-                            <span class="todo-item-label" class:line-through={todo.isComplete}>{todo.title}</span>
+                            {#if !todo.isEditing}
+                                <span
+                                    on:dblclick={editTodo(todo)}
+                                    class="todo-item-label"
+                                    class:line-through={todo.isComplete}>{todo.title}</span
+                                >
+                            {:else}
+                                <input
+                                    type="text"
+                                    class="todo-item-input"
+                                    bind:value={todo.title}
+                                    on:blur={doneEdit(todo)}
+                                    on:keyup={(event) => doneEditKeydown(event, todo)}
+                                    autofocus
+                                />
+                            {/if}
                         </div>
 
                         <button class="x-button" on:click={deleteTodo(todo.id)}>
