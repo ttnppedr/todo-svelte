@@ -3,6 +3,7 @@
 
     let todoTitle = '';
     let todoId = 4;
+    let currentFilter = 'all';
     let todos = [
         {
             id: 1,
@@ -25,6 +26,13 @@
     ];
 
     $: remainingTodos = todos.filter((todo) => !todo.isComplete).length;
+
+    $: filteredTodos =
+        currentFilter === 'all'
+            ? todos
+            : currentFilter === 'active'
+            ? todos.filter((todo) => !todo.isComplete)
+            : todos.filter((todo) => todo.isComplete);
 
     function addTodo() {
         todos = [
@@ -65,7 +73,7 @@
 
         {#if todos.length > 0}
             <ul class="todo-list">
-                {#each todos as todo}
+                {#each filteredTodos as todo}
                     <li class="todo-item-container">
                         <div class="todo-item">
                             <input type="checkbox" bind:checked={todo.isComplete} />
@@ -96,9 +104,21 @@
 
             <div class="other-buttons-container">
                 <div>
-                    <button class="button filter-button filter-button-active">All</button>
-                    <button class="button filter-button">Active</button>
-                    <button class="button filter-button">Completed</button>
+                    <button
+                        on:click={() => (currentFilter = 'all')}
+                        class="button filter-button"
+                        class:filter-button-active={currentFilter === 'all'}>All</button
+                    >
+                    <button
+                        on:click={() => (currentFilter = 'active')}
+                        class="button filter-button"
+                        class:filter-button-active={currentFilter === 'active'}>Active</button
+                    >
+                    <button
+                        on:click={() => (currentFilter = 'completed')}
+                        class="button filter-button"
+                        class:filter-button-active={currentFilter === 'completed'}>Completed</button
+                    >
                 </div>
                 <div>
                     <button class="button" on:click={clearCompleted}>Clear completed</button>
