@@ -1,4 +1,5 @@
 <script>
+    import { fade, fly, scale } from 'svelte/transition';
     import './css/style.css';
 
     let todoTitle = '';
@@ -89,6 +90,8 @@
             doneEdit(todo);
         }
     }
+
+    let noTodosContainer;
 </script>
 
 <div class="todo-app-container">
@@ -100,8 +103,8 @@
 
         {#if todos.length > 0}
             <ul class="todo-list">
-                {#each filteredTodos as todo}
-                    <li class="todo-item-container">
+                {#each filteredTodos as todo (todo.id)}
+                    <li class="todo-item-container" in:scale out:fade>
                         <div class="todo-item">
                             <input type="checkbox" bind:checked={todo.isComplete} />
                             {#if !todo.isEditing}
@@ -141,7 +144,12 @@
                     <button class="button" on:click={checkAllTodos}>Check All</button>
                 </div>
 
-                <span>{remainingTodos} items remaining</span>
+                <div>
+                    {#key remainingTodos}
+                        <span style="display: inline-block" in:fly={{ y: -20 }}>{remainingTodos}</span>
+                    {/key}
+                    <span>items remaining</span>
+                </div>
             </div>
 
             <div class="other-buttons-container">
@@ -167,7 +175,13 @@
                 </div>
             </div>
         {:else}
-            <div class="no-todos-container">
+            <div
+                bind:this={noTodosContainer}
+                class="no-todos-container"
+                transition:fade
+                on:introstart={() => (noTodosContainer.style = 'display:none')}
+                on:introend={() => (noTodosContainer.style = 'display:block')}
+            >
                 <div class="no-todos-svg-container">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
