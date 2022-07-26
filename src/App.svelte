@@ -2,8 +2,8 @@
     import { fade, fly, scale } from 'svelte/transition';
     import './css/style.css';
     import NoTodosContainer from './NoTodosContainer.svelte';
+    import TodoForm from './TodoForm.svelte';
 
-    let todoTitle = '';
     let todoId = 4;
     let currentFilter = 'all';
     let todos = [
@@ -36,18 +36,16 @@
             ? todos.filter((todo) => !todo.isComplete)
             : todos.filter((todo) => todo.isComplete);
 
-    function addTodo() {
+    function addTodo(event) {
         todos = [
             ...todos,
             {
                 id: todoId++,
-                title: todoTitle,
+                title: event.detail.todoTitle,
                 isComplete: false,
                 isEditing: false,
             },
         ];
-
-        todoTitle = '';
     }
 
     function deleteTodo(id) {
@@ -91,16 +89,12 @@
             doneEdit(todo);
         }
     }
-
-    let noTodosContainer;
 </script>
 
 <div class="todo-app-container">
     <div class="todo-app">
         <h2>Todo App</h2>
-        <form action="#" on:submit|preventDefault={addTodo}>
-            <input type="text" class="todo-input" placeholder="What do you need to do?" bind:value={todoTitle} />
-        </form>
+        <TodoForm on:todoAdded={addTodo} />
 
         {#if todos.length > 0}
             <ul class="todo-list">
