@@ -1,50 +1,63 @@
 <script>
     import { fade, fly, scale } from 'svelte/transition';
-    import { createEventDispatcher } from 'svelte';
+    import { todos } from './stores/TodoStore.js';
 
-    const dispatch = createEventDispatcher();
+    let currentFilter = 'all';
 
-    export let filteredTodos;
-    export let remainingTodos;
-    export let currentFilter;
+    $: remainingTodos = $todos.filter((todo) => !todo.isComplete).length;
+
+    $: filteredTodos =
+        currentFilter === 'all'
+            ? $todos
+            : currentFilter === 'active'
+            ? $todos.filter((todo) => !todo.isComplete)
+            : $todos.filter((todo) => todo.isComplete);
 
     function checkAllTodos() {
-        dispatch('checkAllTodosDispatched');
+        todos.update((todos) =>
+            todos.map((todo) => {
+                todo.isComplete = true;
+                return todo;
+            }),
+        );
     }
 
     function clearCompleted() {
-        dispatch('clearCompletedDispatched');
+        todos.update((todos) => todos.filter((todo) => !todo.isComplete));
     }
 
     function deleteTodo(id) {
-        dispatch('deleteTodoDispatched', {
-            id,
-        });
+        todos.update((todos) => todos.filter((todo) => todo.id !== id));
     }
 
     function updateFilter(filter) {
-        dispatch('updateFilterDispatched', {
-            filter,
-        });
+        currentFilter = filter;
     }
 
+    let beforeEditCache = '';
     function editTodo(todo) {
-        dispatch('editTodoDispatched', {
-            todo,
-        });
+        beforeEditCache = todo.title;
+        todo.isEditing = true;
+        todos.update((todos) => todos);
     }
 
     function doneEdit(todo) {
-        dispatch('doneEditDispatched', {
-            todo,
-        });
+        if (todo.title.trim().length === 0) {
+            todo.title = beforeEditCache;
+        }
+        todo.isEditing = false;
+        todos.update((todos) => todos);
     }
 
     function doneEditKeydown(event, todo) {
-        dispatch('doneEditKeydownDispatched', {
-            key: event.key,
-            todo,
-        });
+        if (event.key === 'Enter') {
+            doneEdit(todo);
+        }
+
+        if (event.key === 'Escape') {
+            todo.title = beforeEditCache;
+            doneEdit(todo);
+        }
     }
 </script>
 
